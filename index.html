@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GTM / BD Soft Launch Budget Calculator</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0c1016;
+      --panel: #141a22;
+      --panel-2: #101720;
+      --line: #293241;
+      --line-soft: #202938;
+      --text: #edf2f7;
+      --muted: #95a3b5;
+      --accent: #48b6a3;
+      --accent-2: #e9b44c;
+      --danger: #ff756f;
+      --ok: #72d184;
+      --field: #0b1119;
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(72, 182, 163, 0.13), transparent 28rem),
+        linear-gradient(135deg, #0c1016 0%, #111821 52%, #0b0f15 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    main {
+      width: min(1440px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(72, 182, 163, 0.45);
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(72, 182, 163, 0.22), rgba(233, 180, 76, 0.12));
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0;
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(20px, 2vw, 30px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    button {
+      border: 1px solid rgba(72, 182, 163, 0.55);
+      border-radius: 8px;
+      background: #16352f;
+      color: var(--text);
+      min-height: 38px;
+      padding: 0 14px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1b413a;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid rgba(72, 182, 163, 0.9);
+      outline-offset: 2px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .left {
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(20, 26, 34, 0.92);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 44px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(16, 23, 32, 0.9);
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .grid-form {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(128px, 1fr));
+      gap: 10px;
+      padding: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid #303b4d;
+      border-radius: 6px;
+      background: var(--field);
+      color: var(--text);
+      padding: 7px 9px;
+      font: inherit;
+    }
+
+    input[type="number"] {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line-soft);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      background: rgba(12, 16, 22, 0.7);
+    }
+
+    td:first-child,
+    th:first-child {
+      padding-left: 14px;
+    }
+
+    td:last-child,
+    th:last-child {
+      padding-right: 14px;
+      text-align: right;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .money,
+    .number {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .total-cell {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .funnel {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(112px, 1fr));
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .side {
+      display: grid;
+      gap: 14px;
+      position: sticky;
+      top: 12px;
+      min-width: 0;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .card {
+      min-height: 86px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+      padding: 12px;
+    }
+
+    .card.wide {
+      grid-column: 1 / -1;
+      min-height: 90px;
+    }
+
+    .card-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card-value {
+      margin-top: 6px;
+      color: var(--text);
+      font-size: 22px;
+      line-height: 1.1;
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .card.wide .card-value {
+      font-size: 28px;
+      color: var(--accent);
+    }
+
+    .decision-box {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .decision {
+      border: 1px solid rgba(233, 180, 76, 0.45);
+      border-radius: 8px;
+      background: rgba(233, 180, 76, 0.1);
+      padding: 12px;
+      color: #ffe1a3;
+      font-weight: 850;
+    }
+
+    .decision.good {
+      border-color: rgba(114, 209, 132, 0.5);
+      background: rgba(114, 209, 132, 0.1);
+      color: #a9efb7;
+    }
+
+    .risk-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .risk-list li {
+      border: 1px solid rgba(255, 117, 111, 0.4);
+      border-radius: 8px;
+      background: rgba(255, 117, 111, 0.08);
+      padding: 9px 10px;
+      color: #ffbbb8;
+    }
+
+    .risk-list li.good {
+      border-color: rgba(114, 209, 132, 0.4);
+      background: rgba(114, 209, 132, 0.08);
+      color: #bff2c8;
+    }
+
+    .copy-status {
+      min-height: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .compact-total {
+      color: var(--accent);
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+        grid-template-columns: 1fr 1fr;
+        align-items: stretch;
+      }
+    }
+
+    @media (max-width: 820px) {
+      main {
+        width: min(100% - 20px, 720px);
+        padding-top: 12px;
+      }
+
+      header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .grid-form,
+      .funnel,
+      .side {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="brand">
+        <div class="mark">ST</div>
+        <div>
+          <h1>GTM / BD Soft Launch Budget Calculator</h1>
+          <div class="subtitle">Быстрый расчет бюджета и сигнала теста</div>
+        </div>
+      </div>
+      <button id="copySummary" type="button">Copy summary</button>
+    </header>
+
+    <div class="layout">
+      <div class="left">
+        <section class="panel" aria-labelledby="setup-title">
+          <div class="panel-head">
+            <h2 id="setup-title">1. Настройки теста</h2>
+          </div>
+          <div class="grid-form">
+            <label>
+              Направление
+              <input id="direction" type="text" value="Продукт">
+            </label>
+            <label>
+              Длительность тестирования, дней
+              <input id="durationDays" type="number" min="1" step="1" value="14">
+            </label>
+            <label>
+              Целевые лиды, которые мы планируем получить
+              <input id="targetLeads" type="number" min="0" step="1" value="300">
+            </label>
+            <label>
+              Количество каналов
+              <input id="channelsCount" type="number" min="1" step="1" value="2">
+            </label>
+            <label>
+              Валюта
+              <select id="currency">
+                <option value="$">$ USD</option>
+                <option value="€">€ EUR</option>
+                <option value="£">£ GBP</option>
+                <option value="₽">₽ RUB</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="setup-costs-title">
+          <div class="panel-head">
+            <h2 id="setup-costs-title">2. Разовые затраты</h2>
+            <div class="compact-total" id="setupTotalSmall">$0</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Статья</th>
+                  <th>Цена за единицу</th>
+                  <th>Кол-во</th>
+                  <th>Итого</th>
+                </tr>
+              </thead>
+              <tbody id="setupCostsBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="people-costs-title">
+          <div class="panel-head">
+            <h2 id="people-costs-title">3. Затраты на людей</h2>
+            <div class="compact-total" id="peopleTotalSmall">$0</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Роль</th>
+                  <th>Дневная ставка</th>
+                  <th>Людей</th>
+                  <th>Дней</th>
+                  <th>Итого</th>
+                </tr>
+              </thead>
+              <tbody id="peopleCostsBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="funnel-title">
+          <div class="panel-head">
+            <h2 id="funnel-title">4. Параметры воронки</h2>
+          </div>
+          <div class="funnel">
+            <label>
+              Ответы, %
+              <input id="replyRate" type="number" min="0" max="100" step="0.1" value="8">
+            </label>
+            <label>
+              Позитивные ответы, %
+              <input id="positiveReplyRate" type="number" min="0" max="100" step="0.1" value="35">
+            </label>
+            <label>
+              Бронирование звонков, %
+              <input id="callBookingRate" type="number" min="0" max="100" step="0.1" value="45">
+            </label>
+            <label>
+              Квалифицированные звонки, %
+              <input id="qualifiedCallRate" type="number" min="0" max="100" step="0.1" value="60">
+            </label>
+            <label>
+              Предложения, %
+              <input id="proposalRate" type="number" min="0" max="100" step="0.1" value="50">
+            </label>
+          </div>
+        </section>
+      </div>
+
+      <aside class="side">
+        <section class="panel" aria-labelledby="summary-title">
+          <div class="panel-head">
+            <h2 id="summary-title">5. Итоги</h2>
+          </div>
+          <div class="cards">
+            <div class="card wide">
+              <div class="card-label">Общий бюджет</div>
+              <div class="card-value" id="totalBudget">$0</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Разовые затраты</div>
+              <div class="card-value" id="setupTotal">$0</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Люди</div>
+              <div class="card-value" id="peopleTotal">$0</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Ожидаемые ответы</div>
+              <div class="card-value" id="expectedReplies">0</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Квалифицированные звонки</div>
+              <div class="card-value" id="expectedQualifiedCalls">0</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Цена за квалифицированный звонок</div>
+              <div class="card-value" id="costPerQualifiedCall">$0</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Ожидаемые предложения</div>
+              <div class="card-value" id="expectedProposals">0</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="decision-title">
+          <div class="panel-head">
+            <h2 id="decision-title">6. Решение</h2>
+          </div>
+          <div class="decision-box">
+            <div class="decision" id="decisionText">Расчет готов</div>
+            <ul class="risk-list" id="riskList"></ul>
+            <div class="copy-status" id="copyStatus" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const HIGH_COST_THRESHOLD = 5000;
+    const HIGH_CPQC_THRESHOLD = 1000;
+    const WEAK_SIGNAL_QUALIFIED_CALLS = 3;
+    const REASONABLE_BUDGET_THRESHOLD = 3000;
+
+    const setupRows = [
+      ["One-pager / offer packaging", 600, 1],
+      ["Case study preparation", 500, 1],
+      ["Landing page update", 800, 1],
+      ["Lead list preparation", 0.8, 300],
+      ["LinkedIn accounts", 120, 2],
+      ["Tools / subscriptions", 250, 1],
+      ["Legal / template review", 350, 1],
+      ["Other setup", 200, 1]
+    ];
+
+    const peopleRows = [
+      ["BD manager", 350, 1, 14],
+      ["Outreach manager", 220, 1, 14],
+      ["Research assistant", 120, 1, 6],
+      ["Designer / content", 250, 1, 3],
+      ["Ops / CRM", 200, 1, 3],
+      ["Founder time", 0, 1, 4]
+    ];
+
+    const els = {
+      direction: document.getElementById("direction"),
+      durationDays: document.getElementById("durationDays"),
+      targetLeads: document.getElementById("targetLeads"),
+      channelsCount: document.getElementById("channelsCount"),
+      currency: document.getElementById("currency"),
+      setupCostsBody: document.getElementById("setupCostsBody"),
+      peopleCostsBody: document.getElementById("peopleCostsBody"),
+      setupTotalSmall: document.getElementById("setupTotalSmall"),
+      peopleTotalSmall: document.getElementById("peopleTotalSmall"),
+      replyRate: document.getElementById("replyRate"),
+      positiveReplyRate: document.getElementById("positiveReplyRate"),
+      callBookingRate: document.getElementById("callBookingRate"),
+      qualifiedCallRate: document.getElementById("qualifiedCallRate"),
+      proposalRate: document.getElementById("proposalRate"),
+      totalBudget: document.getElementById("totalBudget"),
+      setupTotal: document.getElementById("setupTotal"),
+      peopleTotal: document.getElementById("peopleTotal"),
+      expectedReplies: document.getElementById("expectedReplies"),
+      expectedQualifiedCalls: document.getElementById("expectedQualifiedCalls"),
+      costPerQualifiedCall: document.getElementById("costPerQualifiedCall"),
+      expectedProposals: document.getElementById("expectedProposals"),
+      decisionText: document.getElementById("decisionText"),
+      riskList: document.getElementById("riskList"),
+      copySummary: document.getElementById("copySummary"),
+      copyStatus: document.getElementById("copyStatus")
+    };
+
+    function valueNumber(input) {
+      const parsed = Number(input.value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function money(value) {
+      const rounded = Math.round(value);
+      return `${els.currency.value}${rounded.toLocaleString("en-US")}`;
+    }
+
+    function count(value) {
+      return Number.isFinite(value) ? value.toFixed(1).replace(/\.0$/, "") : "0";
+    }
+
+    function createSetupTable() {
+      els.setupCostsBody.innerHTML = setupRows.map((row, index) => `
+        <tr data-index="${index}">
+          <td><input class="setup-item" type="text" value="${row[0]}"></td>
+          <td><input class="setup-unit" type="number" min="0" step="0.01" value="${row[1]}"></td>
+          <td><input class="setup-qty" type="number" min="0" step="0.1" value="${row[2]}"></td>
+          <td class="money total-cell setup-row-total">${els.currency.value}0</td>
+        </tr>
+      `).join("");
+    }
+
+    function createPeopleTable() {
+      els.peopleCostsBody.innerHTML = peopleRows.map((row, index) => `
+        <tr data-index="${index}">
+          <td><input class="people-role" type="text" value="${row[0]}"></td>
+          <td><input class="people-rate" type="number" min="0" step="0.01" value="${row[1]}"></td>
+          <td><input class="people-count" type="number" min="0" step="0.1" value="${row[2]}"></td>
+          <td><input class="people-days" type="number" min="0" step="0.1" value="${row[3]}"></td>
+          <td class="money total-cell people-row-total">${els.currency.value}0</td>
+        </tr>
+      `).join("");
+    }
+
+    function sumSetupCosts() {
+      let total = 0;
+      document.querySelectorAll("#setupCostsBody tr").forEach((row) => {
+        const unit = valueNumber(row.querySelector(".setup-unit"));
+        const qty = valueNumber(row.querySelector(".setup-qty"));
+        const rowTotal = unit * qty;
+        total += rowTotal;
+        row.querySelector(".setup-row-total").textContent = money(rowTotal);
+      });
+      return total;
+    }
+
+    function sumPeopleCosts() {
+      let total = 0;
+      document.querySelectorAll("#peopleCostsBody tr").forEach((row) => {
+        const rate = valueNumber(row.querySelector(".people-rate"));
+        const people = valueNumber(row.querySelector(".people-count"));
+        const days = valueNumber(row.querySelector(".people-days"));
+        const rowTotal = rate * people * days;
+        total += rowTotal;
+        row.querySelector(".people-row-total").textContent = money(rowTotal);
+      });
+      return total;
+    }
+
+    function percent(input) {
+      return Math.max(0, valueNumber(input)) / 100;
+    }
+
+    function calculate() {
+      const setupTotal = sumSetupCosts();
+      const peopleTotal = sumPeopleCosts();
+      const totalBudget = setupTotal + peopleTotal;
+      const leads = Math.max(0, valueNumber(els.targetLeads));
+
+      const expectedReplies = leads * percent(els.replyRate);
+      const positiveReplies = expectedReplies * percent(els.positiveReplyRate);
+      const bookedCalls = positiveReplies * percent(els.callBookingRate);
+      const qualifiedCalls = bookedCalls * percent(els.qualifiedCallRate);
+      const proposals = qualifiedCalls * percent(els.proposalRate);
+      const cpqc = qualifiedCalls > 0 ? totalBudget / qualifiedCalls : 0;
+
+      els.setupTotal.textContent = money(setupTotal);
+      els.setupTotalSmall.textContent = money(setupTotal);
+      els.peopleTotal.textContent = money(peopleTotal);
+      els.peopleTotalSmall.textContent = money(peopleTotal);
+      els.totalBudget.textContent = money(totalBudget);
+      els.expectedReplies.textContent = count(expectedReplies);
+      els.expectedQualifiedCalls.textContent = count(qualifiedCalls);
+      els.costPerQualifiedCall.textContent = qualifiedCalls > 0 ? money(cpqc) : "N/A";
+      els.expectedProposals.textContent = count(proposals);
+
+      const risks = [];
+      if (totalBudget > HIGH_COST_THRESHOLD) {
+        risks.push("High cost test");
+      }
+      if (cpqc > HIGH_CPQC_THRESHOLD || qualifiedCalls === 0) {
+        risks.push("Needs tighter ICP or cheaper channel");
+      }
+      if (qualifiedCalls < WEAK_SIGNAL_QUALIFIED_CALLS) {
+        risks.push("Weak signal risk");
+      }
+
+      const isReasonable = totalBudget <= REASONABLE_BUDGET_THRESHOLD && qualifiedCalls >= WEAK_SIGNAL_QUALIFIED_CALLS;
+      const decision = isReasonable ? "Reasonable soft launch test" : (risks[0] || "Monitor before scaling");
+
+      els.decisionText.textContent = decision;
+      els.decisionText.classList.toggle("good", isReasonable);
+      els.riskList.innerHTML = risks.length
+        ? risks.map((risk) => `<li>${risk}</li>`).join("")
+        : `<li class="good">No critical risks</li>`;
+
+      return {
+        direction: els.direction.value.trim() || "N/A",
+        duration: valueNumber(els.durationDays),
+        leads,
+        totalBudget,
+        expectedReplies,
+        qualifiedCalls,
+        cpqc,
+        decision,
+        risks
+      };
+    }
+
+    async function copySummary() {
+      const result = calculate();
+      const risks = result.risks.length ? result.risks.join("; ") : "No critical risks";
+      const cpqcText = result.qualifiedCalls > 0 ? money(result.cpqc) : "N/A";
+      const summary = [
+        `Direction: ${result.direction}`,
+        `Duration: ${count(result.duration)} days`,
+        `Leads: ${count(result.leads)}`,
+        `Total budget: ${money(result.totalBudget)}`,
+        `Expected replies: ${count(result.expectedReplies)}`,
+        `Expected qualified calls: ${count(result.qualifiedCalls)}`,
+        `Cost per qualified call: ${cpqcText}`,
+        `Decision: ${result.decision}`,
+        `Risks: ${risks}`
+      ].join("\n");
+
+      try {
+        await navigator.clipboard.writeText(summary);
+        els.copyStatus.textContent = "Summary copied";
+      } catch (error) {
+        const textarea = document.createElement("textarea");
+        textarea.value = summary;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+        els.copyStatus.textContent = "Summary copied";
+      }
+    }
+
+    createSetupTable();
+    createPeopleTable();
+
+    document.addEventListener("input", calculate);
+    document.addEventListener("change", calculate);
+    els.copySummary.addEventListener("click", copySummary);
+    calculate();
+  </script>
+</body>
+</html>
