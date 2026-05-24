@@ -426,7 +426,6 @@
                 <option value="$">$ USD</option>
                 <option value="€">€ EUR</option>
                 <option value="£">£ GBP</option>
-                <option value="₽">₽ RUB</option>
               </select>
             </label>
           </div>
@@ -480,23 +479,23 @@
           <div class="funnel">
             <label>
               Ответы, %
-              <input id="replyRate" type="number" min="0" max="100" step="0.1" value="8">
+              <input id="replyRate" type="number" min="0" max="100" step="0.5" value="8">
             </label>
             <label>
               Позитивные ответы, %
-              <input id="positiveReplyRate" type="number" min="0" max="100" step="0.1" value="35">
+              <input id="positiveReplyRate" type="number" min="0" max="100" step="0.5" value="35">
             </label>
             <label>
               Бронирование звонков, %
-              <input id="callBookingRate" type="number" min="0" max="100" step="0.1" value="45">
+              <input id="callBookingRate" type="number" min="0" max="100" step="0.5" value="45">
             </label>
             <label>
               Квалифицированные звонки, %
-              <input id="qualifiedCallRate" type="number" min="0" max="100" step="0.1" value="60">
+              <input id="qualifiedCallRate" type="number" min="0" max="100" step="0.5" value="60">
             </label>
             <label>
               Предложения, %
-              <input id="proposalRate" type="number" min="0" max="100" step="0.1" value="50">
+              <input id="proposalRate" type="number" min="0" max="100" step="0.5" value="50">
             </label>
           </div>
         </section>
@@ -625,7 +624,7 @@
       els.setupCostsBody.innerHTML = setupRows.map((row, index) => `
         <tr data-index="${index}">
           <td><input class="setup-item" type="text" value="${row[0]}"></td>
-          <td><input class="setup-unit" type="number" min="0" step="0.01" value="${row[1]}"></td>
+          <td><input class="setup-unit" type="number" min="0" step="50" value="${row[1]}"></td>
           <td><input class="setup-qty" type="number" min="0" step="0.1" value="${row[2]}"></td>
           <td class="money total-cell setup-row-total">${els.currency.value}0</td>
         </tr>
@@ -636,7 +635,7 @@
       els.peopleCostsBody.innerHTML = peopleRows.map((row, index) => `
         <tr data-index="${index}">
           <td><input class="people-role" type="text" value="${row[0]}"></td>
-          <td><input class="people-rate" type="number" min="0" step="0.01" value="${row[1]}"></td>
+          <td><input class="people-rate" type="number" min="0" step="50" value="${row[1]}"></td>
           <td><input class="people-count" type="number" min="0" step="0.1" value="${row[2]}"></td>
           <td><input class="people-days" type="number" min="0" step="0.1" value="${row[3]}"></td>
           <td class="money total-cell people-row-total">${els.currency.value}0</td>
